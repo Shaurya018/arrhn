@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+  <meta charset="UTF-8">
+  <title>Aarohan'19</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+  <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css'>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="./js/index.js"></script> 
+  
+</head>
+
+
+<body>
+    <div class="navbar">
+        <a href="#home">Home</a>
+        <a href="#news">News</a>
+        <a href="#contact">Contact</a>
+      </div>
+    <header class="active">
+        
+        <div class="container">
+          <h2>Fullpage Scroll</h2>
+          <h4><a href="https://twitter.com/banhaclong20" target="_blank">by @tomtran</a></h4>
+          <div class="mouse">
+            <div class="mouse-shape">
+              <div class="mouse-animation"></div>
+            </div>
+            <div class="mouse-msg">Scroll me!</div>
+          </div>  
+        </div>  
+      </header>
+      <section>
+        <div class="container">
+          <h2>Page 1</h2>
+          <h4>Content for page 1</h4>
+        </div>  
+      </section>
+      <section>
+        <div class="container">
+          <h2>Page 2</h2>
+          <h4>Content for page 2</h4>
+        </div>  
+      </section>
+      <section>
+        <div class="container">
+          <h2>Page 3</h2>
+          <h4>Content for page 3</h4>
+        </div>  
+      </section>
+      <section>
+        <div class="container">
+          <h2>Page 4</h2>
+          <h4>Content for page 4</h4>
+        </div>  
+      </section>
+      <footer>
+        <div class="container">
+          <h2>Footer</h2>
+        </div>  
+      </footer>  
+
+
+<script>
+document.addEventListener('wheel', scrollPage);
+
+function scrollPage(e) {
+  var nodesName = ['SECTION'];
+  console.log(e.target.nodeName);
+  if (nodesName.includes(e.target.nodeName)) {
+    var next = e.target.nextElementSibling;
+    var prev = e.target.previousElementSibling;
+  } else {
+    var next = e.target.closest(nodesName).nextElementSibling;
+    var prev = e.target.closest(nodesName).previousElementSibling;
+  }
+  
+  if (e.deltaY < 0) {
+    e.preventDefault();
+    if(nodesName.includes(prev.nodeName)) {
+      verticalScroll(prev, 1300, 'easeInOutQuad');
+      e.target.closest(nodesName).classList.remove('active')
+      prev.classList.add('active')
+    }
+    
+  } else if (e.deltaY > 0) {
+    e.preventDefault();
+    if(nodesName.includes(next.nodeName)) {
+      verticalScroll(next, 1200, 'easeInOutQuad', runAfter);
+      e.target.closest(nodesName).classList.remove('active');
+      next.classList.add('active');
+    }
+  } else {
+    return false;
+  }
+}
+
+function runAfter() {
+  console.log('after');
+}
+
+function verticalScroll(destination) {
+  var duration = arguments.length <= 1 || arguments[1] === undefined ? 200 : arguments[1];
+  var easing = arguments.length <= 2 || arguments[2] === undefined ? 'linear' : arguments[2];
+  var callback = arguments[3];
+  var easings = {
+    easeInOutQuad: function easeInOutQuad(t) {
+      return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    },
+    easeInCubic(t) {
+      return t * t * t;
+    },
+    easeInOutCubic(t) {
+      return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+    }
+  };
+  
+  console.log(easings.easeInOutQuad);
+  
+  var start = window.pageYOffset;
+  var startTime = 'now' in window.performance ? performance.now() : new Date().getTime();
+  var documentHeight = Math.max(document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight);
+  var windowHeight = window.innerHeight || document.documentElement.clientHeight || document.getElementsByTagName('body')[0].clientHeight;
+  var destinationOffset = typeof destination === 'number' ? destination : destination.offsetTop;
+  var destinationOffsetToScroll = Math.round(documentHeight - destinationOffset < windowHeight ? documentHeight - windowHeight : destinationOffset);
+  
+  console.log("documentHeight " + documentHeight);
+  console.log("windowHeight " + windowHeight);
+  console.log("destinationOffset " + destinationOffset);
+  console.log("destinationOffsetToScroll " + destinationOffsetToScroll);
+
+  if ('requestAnimationFrame' in window === false) {
+    window.scroll(0, destinationOffsetToScroll);
+    if (callback) {
+      callback();
+    }
+    return;
+  }
+
+  function scroll() {
+    var now = 'now' in window.performance ? performance.now() : new Date().getTime();
+    var time = Math.min(1, (now - startTime) / duration);
+    var timeFunction = easings[easing](time);
+    window.scroll(0, Math.ceil(timeFunction * (destinationOffsetToScroll - start) + start));
+
+    if (window.pageYOffset === destinationOffsetToScroll) {
+      if (callback) {
+        callback();
+      }
+      return;
+    }
+    
+    requestAnimationFrame(scroll);
+  }
+  
+  scroll();
+}
+
+</script>
+
+</body>
+    
+      
+
+    
+
+
+</html>
